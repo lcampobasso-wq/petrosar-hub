@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)file:///C:/Users/Usuario/Downloads/dashboard_FINAL_LIMPIO.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Visitas a Frentes de Trabajo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #f0f2f6;
+            min-height: 100vh;
+        }
+
+        /* ── PETROSAR HEADER ── */
+        .ps-header {
+            background: linear-gradient(135deg, #1e2d3e 0%, #152333 100%);
+            padding: 14px 24px;
+            display: flex; align-items: center; gap: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .ps-logo { width: 38px; height: 38px; border-radius: 9px; overflow: hidden; flex-shrink: 0; }
+        .ps-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .ps-header-brand { font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+        .ps-header-title { font-size: 1.1rem; font-weight: 700; color: #fff; line-height: 1.2; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ── old .header hidden, replaced by ps-header ── */
+        .header { display: none; }
+
+        .status-bar {
+            background: #ffffff;
+            padding: 0.875rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1.5px solid #e2e8f0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+
+        .status-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            flex-shrink: 0;
+        }
+        .status-dot.connected { background: #48bb78; }
+        .status-dot.loading   { background: #ed8936; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .btn-refresh {
+            background: #1e2d3e;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.82rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .btn-refresh:hover {
+            background: #152333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30,45,62,0.3);
+        }
+        .btn-refresh:disabled { background: #cbd5e0; cursor: not-allowed; transform: none; }
+
+        .filters {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+            background: #ffffff;
+            padding: 1.25rem 1.5rem;
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+        }
+
+        .filter-group { flex: 1; }
+
+        .filter-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #718096;
+            margin-bottom: 6px;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            background: #fafbfc;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        .filter-group select:focus { border-color: #e8a020; }
+
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .kpi-card {
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+            background: #fff;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+
+        .kpi-card.orange { border-color: #e8a020; background: linear-gradient(135deg, #fffbf0 0%, #fff3d6 100%); }
+        .kpi-card.red    { border-color: #f56565; background: linear-gradient(135deg, #fff5f5 0%, #ffe4e4 100%); }
+        .kpi-card.green  { border-color: #48bb78; background: linear-gradient(135deg, #f0fff4 0%, #dcffe8 100%); }
+        .kpi-card.blue   { border-color: #1e2d3e; background: linear-gradient(135deg, #f0f4f8 0%, #e2eaf3 100%); }
+        .kpi-card.purple { border-color: #9f7aea; background: linear-gradient(135deg, #faf5ff 0%, #f0e8ff 100%); }
+
+        .kpi-label {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.06em; color: #718096; margin-bottom: 0.4rem;
+        }
+        .kpi-value { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.2rem; line-height: 1; }
+        .kpi-card.orange .kpi-value { color: #b7791f; }
+        .kpi-card.red    .kpi-value { color: #c53030; }
+        .kpi-card.green  .kpi-value { color: #2f855a; }
+        .kpi-card.blue   .kpi-value { color: #1e2d3e; }
+        .kpi-card.purple .kpi-value { color: #6b46c1; }
+        .kpi-subtitle { font-size: 0.72rem; color: #718096; }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .chart-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .chart-title {
+            font-size: 0.9rem; font-weight: 700; color: #1a202c;
+            margin-bottom: 1.25rem; padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f0f2f6;
+        }
+
+        .details-section {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detail-card {
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .detail-label { font-size: 0.8rem; font-weight: 600; color: #2d3748; margin-bottom: 0.4rem; }
+        .detail-value { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.2rem; }
+        .detail-percentage { font-size: 0.72rem; color: #718096; }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .team-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+            border: 1.5px solid #e2e8f0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        .team-card.danger  { background: #fff; border-left: 4px solid #f56565; }
+        .team-card.success { background: #fff; border-left: 4px solid #48bb78; }
+
+        .team-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem; }
+        .team-card.danger  .team-title { color: #c53030; }
+        .team-card.success .team-title { color: #2f855a; }
+
+        .team-item {
+            background: #f8fafc;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.625rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .team-item:hover { transform: translateX(4px); box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+        .team-name       { font-weight: 600; color: #1a202c; font-size: 0.84rem; }
+        .team-supervisor { font-size: 0.72rem; color: #718096; margin-top: 2px; }
+        .team-count      { font-size: 1.4rem; font-weight: 800; }
+        .team-card.danger  .team-count { color: #f56565; }
+        .team-card.success .team-count { color: #48bb78; }
+
+        .supervisors-card {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            border-left: 4px solid #1e2d3e;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1rem;
+        }
+        .supervisors-title { font-size: 0.9rem; font-weight: 700; color: #1e2d3e; margin-bottom: 1rem; }
+
+        .supervisors-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        @media (max-width: 768px) { .supervisors-grid { grid-template-columns: 1fr; } }
+
+        .supervisor-item {
+            background: #f8fafc;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s;
+        }
+        .supervisor-item:hover { transform: scale(1.01); box-shadow: 0 3px 10px rgba(30,45,62,0.1); }
+        .supervisor-rank  { font-size: 1.1rem; font-weight: 800; color: #e8a020; min-width: 28px; }
+        .supervisor-name  { flex: 1; font-weight: 600; color: #1a202c; margin: 0 0.75rem; font-size: 0.84rem; }
+        .supervisor-visits { font-weight: 700; color: #1e2d3e; font-size: 0.84rem; }
+
+        .loading { text-align: center; padding: 3rem; color: #718096; }
+
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #e8a020;
+            border-radius: 50%;
+            width: 36px; height: 36px;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .error {
+            background: #fff5f5;
+            border: 1.5px solid #fc8181;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #c53030;
+            font-size: 0.86rem;
+        }
+    </style>
+</head>
+<body>
+
+<header class="ps-header">
+  <div class="ps-logo">
+    <img src="data:image/png;base64,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" alt="PETROSAR SA">
+  </div>
+  <div>
+    <div class="ps-header-brand">PETROSAR SA</div>
+    <div class="ps-header-title">📊 Tablero de Control — Visitas a Frentes de Trabajo</div>
+  </div>
+</header>
+
+<div class="container">
+    <div class="header">
+        <h1>📊 Tablero de Control - Visitas a Frentes de Trabajo</h1>
+    </div>
+
+        <div class="status-bar">
+            <div class="status-info">
+                <div class="status-dot connected" id="statusDot"></div>
+                <span id="statusText">✅ Conectado a Google Sheets - 292 registros procesados</span>
+                <span id="lastUpdate">Última actualización: 11:52:51</span>
+            </div>
+            <button class="btn-refresh" id="btnRefresh" onclick="cargarDatos()">🔄 Actualizar Datos</button>
+        </div>
+
+        <div id="errorContainer"></div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Año</label>
+                <select id="selectAño" onchange="actualizarVista()"><option value="2025">2025</option><option value="2026">2026</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Mes</label>
+                <select id="selectMes" onchange="actualizarVista()"><option value="Todos">Todos los meses</option><option value="Enero" style="color: rgb(156, 163, 175);">Enero</option><option value="Febrero" style="color: rgb(156, 163, 175);">Febrero</option><option value="Marzo" style="color: rgb(156, 163, 175);">Marzo</option><option value="Abril" style="color: rgb(156, 163, 175);">Abril</option><option value="Mayo">Mayo</option><option value="Junio">Junio</option><option value="Julio">Julio</option><option value="Agosto">Agosto</option><option value="Septiembre">Septiembre</option><option value="Octubre">Octubre</option><option value="Noviembre">Noviembre</option><option value="Diciembre">Diciembre</option></select>
+            </div>
+        </div>
+
+        <div class="kpis" id="kpisContainer">
+                <div class="kpi-card blue">
+                    <div class="kpi-label">Período</div>
+                    <div class="kpi-value">2026</div>
+                    <div class="kpi-subtitle">Abril</div>
+                </div>
+                <div class="kpi-card orange">
+                    <div class="kpi-label">Total de Visitas</div>
+                    <div class="kpi-value">5</div>
+                </div>
+                <div class="kpi-card red">
+                    <div class="kpi-label">Desvíos Detectados</div>
+                    <div class="kpi-value">17</div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-label">Acciones Derivadas</div>
+                    <div class="kpi-value">5</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Respuesta ante Emergencia</div>
+                    <div class="kpi-value">100%</div>
+                </div>
+            </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">Distribución Mensual</div>
+                <canvas id="chartMeses" style="box-sizing: border-box; display: block; height: 188px; width: 376px;" width="282" height="141"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Desvíos por Categoría</div>
+                <canvas id="chartDesvios" style="box-sizing: border-box; display: block; height: 376px; width: 376px;" width="282" height="282"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Respuesta a Emergencia</div>
+                <canvas id="chartRespuesta" style="box-sizing: border-box; display: block; height: 376px; width: 376px;" width="282" height="282"></canvas>
+            </div>
+        </div>
+
+        <div class="details-section">
+            <div class="chart-title">Detalles de Desvíos Detectados</div>
+            <div class="details-grid" id="detallesDesvios">
+                    <div class="detail-card" style="border-color: #805ad5; background: #805ad515;">
+                        <div class="detail-label">Lista de Verificaciones</div>
+                        <div class="detail-value" style="color: #805ad5;">12</div>
+                        <div class="detail-percentage">70.6% del total</div>
+                    </div>
+                
+                    <div class="detail-card" style="border-color: #3b82f6; background: #3b82f615;">
+                        <div class="detail-label">Equipos</div>
+                        <div class="detail-value" style="color: #3b82f6;">1</div>
+                        <div class="detail-percentage">5.9% del total</div>
+                    </div>
+                
+                    <div class="detail-card" style="border-color: #6b7280; background: #6b728015;">
+                        <div class="detail-label">Otros</div>
+                        <div class="detail-value" style="color: #6b7280;">2</div>
+                        <div class="detail-percentage">11.8% del total</div>
+                    </div>
+                
+                    <div class="detail-card" style="border-color: #8b5cf6; background: #8b5cf615;">
+                        <div class="detail-label">Documentación</div>
+                        <div class="detail-value" style="color: #8b5cf6;">2</div>
+                        <div class="detail-percentage">11.8% del total</div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="teams-grid">
+            <div class="team-card danger">
+                <div class="team-title">🔴 Cuadrillas con Más Observaciones</div>
+                <div id="cuadrillasMas">
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">1100 - OMF Nocturno CD</div>
+                            <div class="team-supervisor">Supervisor: Gustavo Ogas</div>
+                        </div>
+                        <div class="team-count">4</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">2200 - OMF Nocturno VH</div>
+                            <div class="team-supervisor">Supervisor: Gustavo Ogas</div>
+                        </div>
+                        <div class="team-count">4</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">U-592 - Mixta AG</div>
+                            <div class="team-supervisor">Supervisor: Adrian Madeira</div>
+                        </div>
+                        <div class="team-count">4</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">U-521 - Mixta VH</div>
+                            <div class="team-supervisor">Supervisor: Martin Cayupel</div>
+                        </div>
+                        <div class="team-count">3</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">U-413 - Mecánica VH</div>
+                            <div class="team-supervisor">Supervisor: Martin Cayupel</div>
+                        </div>
+                        <div class="team-count">2</div>
+                    </div>
+                </div>
+            </div>
+            <div class="team-card success">
+                <div class="team-title">✅ Cuadrillas con Menos Observaciones</div>
+                <div id="cuadrillasMenos">
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">U-413 - Mecánica VH</div>
+                            <div class="team-supervisor">Supervisor: Martin Cayupel</div>
+                        </div>
+                        <div class="team-count">2</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">U-521 - Mixta VH</div>
+                            <div class="team-supervisor">Supervisor: Martin Cayupel</div>
+                        </div>
+                        <div class="team-count">3</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">1100 - OMF Nocturno CD</div>
+                            <div class="team-supervisor">Supervisor: Gustavo Ogas</div>
+                        </div>
+                        <div class="team-count">4</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">2200 - OMF Nocturno VH</div>
+                            <div class="team-supervisor">Supervisor: Gustavo Ogas</div>
+                        </div>
+                        <div class="team-count">4</div>
+                    </div>
+                
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">U-592 - Mixta AG</div>
+                            <div class="team-supervisor">Supervisor: Adrian Madeira</div>
+                        </div>
+                        <div class="team-count">4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="supervisors-card">
+            <div class="supervisors-title">👨‍💼 Top 10 Supervisores con Más Visitas Realizadas</div>
+            <div class="supervisors-grid" id="supervisores"><div>
+                <div class="supervisor-item">
+                    <div class="supervisor-rank">1.</div>
+                    <div class="supervisor-name">Gustavo Ogas</div>
+                    <div class="supervisor-visits">2 visitas</div>
+                </div>
+            
+                <div class="supervisor-item">
+                    <div class="supervisor-rank">2.</div>
+                    <div class="supervisor-name">Martin Cayupel</div>
+                    <div class="supervisor-visits">2 visitas</div>
+                </div>
+            
+                <div class="supervisor-item">
+                    <div class="supervisor-rank">3.</div>
+                    <div class="supervisor-name">Adrian Madeira</div>
+                    <div class="supervisor-visits">1 visitas</div>
+                </div>
+            </div></div>
+        </div>
+    </div>
+
+    <script>
+        // ⚙️ CONFIGURACIÓN
+        const CONFIG = {
+            SHEET_ID: '1I2O_EOutgxnYFMmpKrVpifUkPJVruR3531OAqG2yBRc',
+            API_KEY: 'AIzaSyCivdhPDX3uI1v9sDroVZhgBOjpGZw_uMM',
+            RANGE: 'Respuestas de formulario 1!A:AL',  // Leer desde A hasta AL
+            AUTO_REFRESH: true,
+            REFRESH_INTERVAL: 300000, // 5 minutos
+            
+            INDICES_COLUMNAS: {
+                marcaTemporal: 0,        // Columna A
+                fecha: 1,                // Columna B
+                supervisor: 2,           // Columna C
+                cuadrilla: 3,            // Columna D
+                tareaRealizada: 4,       // Columna E
+                personalInvolucrado: 5,  // Columna F
+                // Columnas G-AJ (índices 6-35) son las 30 preguntas de verificación
+                primeraObservacion: 6,   // Columna G
+                ultimaObservacion: 35,   // Columna AJ
+                columnasInvertidas: [23, 24, 25, 26], // Las que SI = desvío (línea de fuego, etc)
+                desvios: 36,             // Columna AK
+                acciones: 37,            // Columna AL
+                respuestaEmergencia: 8   // Columna I - "Esta contemplada la respuesta a la emergencia"
+            },
+            
+            CATEGORIAS_DESVIOS: {
+                'Seguridad': ['seguro', 'epp', 'chaleco', 'guante', 'casco', 'arnés', 'anillo', 'reloj', 'protección', 'extintor', 'matafuego', 'botiquín', 'señalización', 'señalización', 'cono', 'conos', 'delimitación', 'delimitar', 'valiza', 'triangulo', 'seguridad'],
+                'Vehículos': ['vehículo', 'vehiculo', 'móvil', 'movil', 'camión', 'camion', 'neumático', 'neumatico', 'cubierta', 'rueda', 'alarma', 'tetra', 'retroceso', 'luz', 'guiño', 'parabrisas', 'espejo', 'interno'],
+                'Equipos': ['equipo', 'herramienta', 'grilletes', 'grillete', 'eslinga', 'morsa', 'pinza', 'llave', 'maza', 'caballetes', 'caballete', 'hidrogrúa', 'hidrogrua', 'soga', 'manga', 'expansor'],
+                'Documentación': ['permiso', 'prp', 'documentación', 'documentacion', 'certificado', 'certificación', 'certificacion', 'tarjeta', 'aislamiento', 'formato', 'planilla', 'registro'],
+                'Otros': ['orden', 'limpieza', 'red', 'caja', 'escalera']
+            }
+        };
+
+        let datosCompletos = {}; // Sin datos de respaldo - debe cargar desde Google Sheets
+        let charts = {};
+
+        // Clasificar desvío
+        function clasificarDesvio(texto) {
+            if (!texto) return 'Otros';
+            texto = texto.toLowerCase();
+            
+            for (const [categoria, palabras] of Object.entries(CONFIG.CATEGORIAS_DESVIOS)) {
+                for (const palabra of palabras) {
+                    if (texto.includes(palabra)) return categoria;
+                }
+            }
+            return 'Otros';
+        }
+
+        // Contar observaciones/desvíos de columnas B-AE
+        function contarObservaciones(fila) {
+            let desviosEncontrados = 0;
+            const idx = CONFIG.INDICES_COLUMNAS;
+            
+            for (let i = idx.primeraObservacion; i <= idx.ultimaObservacion; i++) {
+                const valor = fila[i]?.toString().trim().toUpperCase();
+                
+                // Columnas R, S, T, U (17-20): SI = desvío, NO = correcto
+                if (idx.columnasInvertidas.includes(i)) {
+                    if (valor === 'SI') {
+                        desviosEncontrados++;
+                    }
+                } else {
+                    // Resto de columnas: NO = desvío, SI = correcto
+                    if (valor === 'NO') {
+                        desviosEncontrados++;
+                    }
+                }
+            }
+            
+            return desviosEncontrados;
+        }
+
+        // Parsear fecha
+        function parsearFecha(textoFecha) {
+            if (!textoFecha) return null;
+            try {
+                const partes = textoFecha.split(' ')[0].split('/');
+                if (partes.length === 3) {
+                    const dia = parseInt(partes[0]);
+                    const mes = parseInt(partes[1]) - 1;
+                    const año = parseInt(partes[2]);
+                    return new Date(año, mes, dia);
+                }
+            } catch (e) {
+                console.error('Error al parsear fecha:', textoFecha, e);
+            }
+            return null;
+        }
+
+        // Obtener nombre del mes
+        function obtenerNombreMes(numeroMes) {
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            return meses[numeroMes];
+        }
+
+        // Procesar datos
+        function procesarDatos(filas) {
+            const datos = {};
+            const idx = CONFIG.INDICES_COLUMNAS;
+
+            for (let i = 1; i < filas.length; i++) {
+                const fila = filas[i];
+                if (!fila || fila.length === 0) continue;
+
+                const fechaTexto = fila[idx.marcaTemporal] || fila[idx.fecha];
+                const fecha = parsearFecha(fechaTexto);
+                if (!fecha) continue;
+
+                const año = fecha.getFullYear();
+                const mes = obtenerNombreMes(fecha.getMonth());
+                const desvioTexto = fila[idx.desvios];
+                const cuadrilla = fila[idx.cuadrilla]?.trim();
+                const supervisor = fila[idx.supervisor]?.trim();
+                const respuesta = fila[idx.respuestaEmergencia]?.trim();
+
+                if (!datos[año]) datos[año] = {};
+                if (!datos[año][mes]) {
+                    datos[año][mes] = {
+                        visitas: 0,
+                        desvios: {},
+                        cuadrillas: {},
+                        supervisores: {},
+                        respuestasEmergencia: { SI: 0, NO: 0, 'N/A': 0 },
+                        desviosTratados: 0  // Nuevo: contador de acciones
+                    };
+                }
+
+                datos[año][mes].visitas++;
+
+                // Contar observaciones de columnas B-AE
+                const observacionesDesvios = contarObservaciones(fila);
+                
+                // Si hay observaciones, sumarlas a "Lista de Verificaciones" como categoría
+                if (observacionesDesvios > 0) {
+                    datos[año][mes].desvios['Lista de Verificaciones'] = (datos[año][mes].desvios['Lista de Verificaciones'] || 0) + observacionesDesvios;
+                }
+
+                // Clasificar desvío de la columna AF si existe
+                let desviosColumnaAF = 0;
+                if (desvioTexto && desvioTexto.trim()) {
+                    const categoria = clasificarDesvio(desvioTexto);
+                    datos[año][mes].desvios[categoria] = (datos[año][mes].desvios[categoria] || 0) + 1;
+                    desviosColumnaAF = 1;
+                }
+
+                // Contar TOTAL de desvíos para la cuadrilla (verificaciones + columna AF)
+                if (cuadrilla && cuadrilla !== 'N/A') {
+                    if (!datos[año][mes].cuadrillas[cuadrilla]) {
+                        datos[año][mes].cuadrillas[cuadrilla] = { supervisor: supervisor || 'Sin especificar', obs: 0 };
+                    }
+                    datos[año][mes].cuadrillas[cuadrilla].obs += (observacionesDesvios + desviosColumnaAF);
+                }
+
+                // Contar desvíos tratados (columna ACCIONES)
+                const accionTexto = fila[idx.acciones];
+                if (accionTexto && accionTexto.trim()) {
+                    datos[año][mes].desviosTratados++;
+                }
+
+                if (supervisor && supervisor !== 'N/A') {
+                    datos[año][mes].supervisores[supervisor] = (datos[año][mes].supervisores[supervisor] || 0) + 1;
+                }
+
+                if (respuesta && ['SI', 'NO', 'N/A'].includes(respuesta.toUpperCase())) {
+                    datos[año][mes].respuestasEmergencia[respuesta.toUpperCase()]++;
+                }
+            }
+
+            return datos;
+        }
+
+        // Cargar datos desde Google Sheets
+        async function cargarDatos() {
+            const btn = document.getElementById('btnRefresh');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const errorContainer = document.getElementById('errorContainer');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Cargando...';
+            statusDot.className = 'status-dot loading';
+            statusText.textContent = 'Cargando datos...';
+            errorContainer.innerHTML = '';
+
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}/values/${CONFIG.RANGE}?key=${CONFIG.API_KEY}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.values && data.values.length > 0) {
+                    console.log('📥 Filas recibidas de Google Sheets:', data.values.length);
+                    console.log('📋 Primera fila (encabezados):', data.values[0]);
+                    console.log('📋 Segunda fila (ejemplo de datos):', data.values[1]);
+                    
+                    datosCompletos = procesarDatos(data.values);
+                    
+                    console.log('✅ Datos procesados:', datosCompletos);
+                    console.log('📊 Años disponibles:', Object.keys(datosCompletos));
+                    
+                    statusDot.className = 'status-dot connected';
+                    statusText.textContent = `✅ Conectado a Google Sheets - ${data.values.length - 1} registros procesados`;
+                    document.getElementById('lastUpdate').textContent = `Última actualización: ${new Date().toLocaleTimeString()}`;
+                    
+                    actualizarSelectores();
+                    actualizarVista();
+                } else {
+                    throw new Error('No se encontraron datos en la hoja');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                statusDot.className = 'status-dot';
+                statusText.textContent = '❌ Error al conectar';
+                errorContainer.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}<br>
+                        <small>Verifica que la hoja sea pública y que la API Key sea correcta.</small>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔄 Actualizar Datos';
+            }
+        }
+
+        // Actualizar selectores
+        function actualizarSelectores() {
+            const selectAño = document.getElementById('selectAño');
+            const selectMes = document.getElementById('selectMes');
+            const añoActual = parseInt(selectAño.value);
+
+            // Actualizar años
+            selectAño.innerHTML = '';
+            Object.keys(datosCompletos).forEach(año => {
+                const option = document.createElement('option');
+                option.value = año;
+                option.textContent = año;
+                if (parseInt(año) === añoActual) option.selected = true;
+                selectAño.appendChild(option);
+            });
+
+            // Actualizar meses - SIEMPRE mostrar los 12 meses
+            const todosLosMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                                   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            
+            selectMes.innerHTML = '<option value="Todos">Todos los meses</option>';
+            todosLosMeses.forEach(mes => {
+                const option = document.createElement('option');
+                option.value = mes;
+                option.textContent = mes;
+                
+                // Marcar visualmente si NO tiene datos (color gris)
+                const tieneDatos = datosCompletos[añoActual] && datosCompletos[añoActual][mes];
+                if (!tieneDatos) {
+                    option.style.color = '#9ca3af';
+                }
+                
+                selectMes.appendChild(option);
+            });
+        }
+
+        // Calcular datos del período
+        function calcularDatosPeriodo() {
+            const año = parseInt(document.getElementById('selectAño').value);
+            const mes = document.getElementById('selectMes').value;
+            const añoData = datosCompletos[año];
+
+            if (!añoData) return null;
+
+            if (mes === 'Todos') {
+                let totalVisitas = 0;
+                let desviosCombinados = {};
+                let cuadrillasCombinadas = {};
+                let supervisoresCombinados = {};
+                let respuestaSI = 0;
+                let respuestaTotal = 0;
+                let totalDesviosTratados = 0;  // Nuevo
+                const graficoMeses = [];
+
+                Object.entries(añoData).forEach(([nombreMes, data]) => {
+                    totalVisitas += data.visitas;
+                    totalDesviosTratados += data.desviosTratados || 0;  // Nuevo
+                    graficoMeses.push({ mes: nombreMes, visitas: data.visitas });
+
+                    Object.entries(data.desvios).forEach(([cat, cant]) => {
+                        desviosCombinados[cat] = (desviosCombinados[cat] || 0) + cant;
+                    });
+
+                    Object.entries(data.cuadrillas).forEach(([nombre, info]) => {
+                        if (!cuadrillasCombinadas[nombre]) {
+                            cuadrillasCombinadas[nombre] = { supervisor: info.supervisor, obs: 0 };
+                        }
+                        cuadrillasCombinadas[nombre].obs += info.obs;
+                    });
+
+                    Object.entries(data.supervisores).forEach(([nombre, cant]) => {
+                        supervisoresCombinados[nombre] = (supervisoresCombinados[nombre] || 0) + cant;
+                    });
+
+                    if (data.respuestasEmergencia) {
+                        respuestaSI += data.respuestasEmergencia.SI || 0;
+                        respuestaTotal += (data.respuestasEmergencia.SI || 0) + (data.respuestasEmergencia.NO || 0);
+                    }
+                });
+
+                const totalDesvios = Object.values(desviosCombinados).reduce((a, b) => a + b, 0);
+                const respuesta = respuestaTotal > 0 ? Math.round((respuestaSI / respuestaTotal) * 100) : 85;
+
+                return {
+                    visitas: totalVisitas,
+                    desvios: totalDesvios,
+                    desviosTratados: totalDesviosTratados,  // Nuevo
+                    cuadrillas: cuadrillasCombinadas,
+                    supervisores: supervisoresCombinados,
+                    graficoMeses,
+                    desviosPorCategoria: desviosCombinados,
+                    respuesta,
+                    mesesCount: Object.keys(añoData).length
+                };
+            } else {
+                const data = añoData[mes];
+                if (!data) {
+                    // Mes sin datos - retornar estructura vacía
+                    return {
+                        visitas: 0,
+                        desvios: 0,
+                        desviosTratados: 0,
+                        cuadrillas: {},
+                        supervisores: {},
+                        graficoMeses: [{ mes: mes, visitas: 0 }],
+                        desviosPorCategoria: {},
+                        respuesta: 0,
+                        mesesCount: 1,
+                        sinDatos: true
+                    };
+                }
+
+                const totalDesvios = Object.values(data.desvios).reduce((a, b) => a + b, 0);
+                const respuestaSI = data.respuestasEmergencia?.SI || 0;
+                const respuestaTotal = (data.respuestasEmergencia?.SI || 0) + (data.respuestasEmergencia?.NO || 0);
+                const respuesta = respuestaTotal > 0 ? Math.round((respuestaSI / respuestaTotal) * 100) : 85;
+
+                return {
+                    visitas: data.visitas,
+                    desvios: totalDesvios,
+                    desviosTratados: data.desviosTratados || 0,
+                    cuadrillas: data.cuadrillas,
+                    supervisores: data.supervisores,
+                    graficoMeses: [{ mes: mes, visitas: data.visitas }],
+                    desviosPorCategoria: data.desvios,
+                    respuesta,
+                    mesesCount: 1
+                };
+            }
+        }
+
+        // Actualizar vista
+        function actualizarVista() {
+            const datos = calcularDatosPeriodo();
+            if (!datos) {
+                // Mostrar mensaje de que no hay datos
+                document.getElementById('kpisContainer').innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #718096;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                        <h3 style="margin-bottom: 0.5rem; color: #2d3748;">No hay datos cargados</h3>
+                        <p>Hacé clic en "Cargar Datos desde Sheets" para conectar con Google Sheets</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Si el mes seleccionado no tiene datos, mostrar mensaje
+            if (datos.sinDatos) {
+                const mes = document.getElementById('selectMes').value;
+                const año = document.getElementById('selectAño').value;
+                document.getElementById('kpisContainer').innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #718096;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📅</div>
+                        <h3 style="margin-bottom: 0.5rem; color: #2d3748;">Sin datos para ${mes} ${año}</h3>
+                        <p>No hay visitas registradas en este período. Seleccioná otro mes.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const año = document.getElementById('selectAño').value;
+            const mes = document.getElementById('selectMes').value;
+
+            // KPIs
+            document.getElementById('kpisContainer').innerHTML = `
+                <div class="kpi-card blue">
+                    <div class="kpi-label">Período</div>
+                    <div class="kpi-value">${año}</div>
+                    <div class="kpi-subtitle">${mes === 'Todos' ? 'Todos los meses' : mes}</div>
+                </div>
+                <div class="kpi-card orange">
+                    <div class="kpi-label">Total de Visitas</div>
+                    <div class="kpi-value">${datos.visitas}</div>
+                </div>
+                <div class="kpi-card red">
+                    <div class="kpi-label">Desvíos Detectados</div>
+                    <div class="kpi-value">${datos.desvios}</div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-label">Acciones Derivadas</div>
+                    <div class="kpi-value">${datos.desviosTratados}</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Respuesta ante Emergencia</div>
+                    <div class="kpi-value">${datos.respuesta}%</div>
+                </div>
+            `;
+
+            // Gráficos
+            actualizarGraficos(datos);
+
+            // Detalles de desvíos
+            const colores = { 
+                'Lista de Verificaciones': '#805ad5',  // Morado para verificaciones B-AE
+                Seguridad: '#ef4444', 
+                Vehículos: '#f59e0b', 
+                Equipos: '#3b82f6', 
+                Documentación: '#8b5cf6', 
+                Otros: '#6b7280' 
+            };
+            document.getElementById('detallesDesvios').innerHTML = Object.entries(datos.desviosPorCategoria)
+                .map(([cat, cant]) => `
+                    <div class="detail-card" style="border-color: ${colores[cat]}; background: ${colores[cat]}15;">
+                        <div class="detail-label">${cat}</div>
+                        <div class="detail-value" style="color: ${colores[cat]};">${cant}</div>
+                        <div class="detail-percentage">${datos.desvios > 0 ? ((cant / datos.desvios) * 100).toFixed(1) : 0}% del total</div>
+                    </div>
+                `).join('');
+
+            // Cuadrillas
+            const cuadrillasArray = Object.entries(datos.cuadrillas);
+            document.getElementById('cuadrillasMas').innerHTML = cuadrillasArray
+                .sort((a, b) => b[1].obs - a[1].obs)
+                .slice(0, 5)
+                .map(([nombre, data]) => `
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">${nombre}</div>
+                            <div class="team-supervisor">Supervisor: ${data.supervisor}</div>
+                        </div>
+                        <div class="team-count">${data.obs}</div>
+                    </div>
+                `).join('') || '<div class="team-item"><div class="team-name">No hay datos</div></div>';
+
+            document.getElementById('cuadrillasMenos').innerHTML = cuadrillasArray
+                .sort((a, b) => a[1].obs - b[1].obs)
+                .slice(0, 5)
+                .map(([nombre, data]) => `
+                    <div class="team-item">
+                        <div>
+                            <div class="team-name">${nombre}</div>
+                            <div class="team-supervisor">Supervisor: ${data.supervisor}</div>
+                        </div>
+                        <div class="team-count">${data.obs}</div>
+                    </div>
+                `).join('') || '<div class="team-item"><div class="team-name">No hay datos</div></div>';
+
+            // Supervisores
+            const supervisoresArray = Object.entries(datos.supervisores)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            const columna1 = supervisoresArray.slice(0, 5);
+            const columna2 = supervisoresArray.slice(5, 10);
+            
+            let htmlSupervisores = '';
+            
+            // Primera columna (1-5)
+            htmlSupervisores += '<div>' + columna1.map(([nombre, visitas], idx) => `
+                <div class="supervisor-item">
+                    <div class="supervisor-rank">${idx + 1}.</div>
+                    <div class="supervisor-name">${nombre}</div>
+                    <div class="supervisor-visits">${visitas} visitas</div>
+                </div>
+            `).join('') + '</div>';
+            
+            // Segunda columna (6-10)
+            if (columna2.length > 0) {
+                htmlSupervisores += '<div>' + columna2.map(([nombre, visitas], idx) => `
+                    <div class="supervisor-item">
+                        <div class="supervisor-rank">${idx + 6}.</div>
+                        <div class="supervisor-name">${nombre}</div>
+                        <div class="supervisor-visits">${visitas} visitas</div>
+                    </div>
+                `).join('') + '</div>';
+            }
+            
+            document.getElementById('supervisores').innerHTML = htmlSupervisores || '<div class="supervisor-item"><div class="supervisor-name">No hay datos</div></div>';
+        }
+
+        // Actualizar gráficos
+        function actualizarGraficos(datos) {
+            const colores = { 
+                'Lista de Verificaciones': '#805ad5',  // Morado
+                Seguridad: '#ef4444', 
+                Vehículos: '#f59e0b', 
+                Equipos: '#3b82f6', 
+                Documentación: '#8b5cf6', 
+                Otros: '#6b7280' 
+            };
+
+            // Gráfico de meses
+            if (charts.meses) charts.meses.destroy();
+            charts.meses = new Chart(document.getElementById('chartMeses'), {
+                type: 'bar',
+                data: {
+                    labels: datos.graficoMeses.map(d => d.mes),
+                    datasets: [{
+                        label: 'Visitas',
+                        data: datos.graficoMeses.map(d => d.visitas),
+                        backgroundColor: '#1e2d3e',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Gráfico de desvíos
+            if (charts.desvios) charts.desvios.destroy();
+            const desviosData = Object.entries(datos.desviosPorCategoria);
+            charts.desvios = new Chart(document.getElementById('chartDesvios'), {
+                type: 'pie',
+                data: {
+                    labels: desviosData.map(d => d[0]),
+                    datasets: [{
+                        data: desviosData.map(d => d[1]),
+                        backgroundColor: desviosData.map(d => colores[d[0]])
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+
+            // Gráfico de respuesta
+            if (charts.respuesta) charts.respuesta.destroy();
+            charts.respuesta = new Chart(document.getElementById('chartRespuesta'), {
+                type: 'pie',
+                data: {
+                    labels: ['Con Respuesta', 'Sin Respuesta'],
+                    datasets: [{
+                        data: [datos.respuesta, 100 - datos.respuesta],
+                        backgroundColor: ['#48bb78', '#f56565']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+        }
+
+        // Auto-refresh (solo si ya hay datos cargados)
+        if (CONFIG.AUTO_REFRESH) {
+            setInterval(() => {
+                if (Object.keys(datosCompletos).length > 0) {
+                    console.log('🔄 Auto-actualización...');
+                    cargarDatos();
+                }
+            }, CONFIG.REFRESH_INTERVAL);
+        }
+
+        // NO cargar automáticamente - esperar a que el usuario haga clic
+        // cargarDatos(); // ← COMENTADO para que el usuario lo active manualmente
+        
+        // Mostrar mensaje inicial
+        document.getElementById('kpisContainer').innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+                <h2 style="margin-bottom: 1rem; color: #2d3748;">Dashboard listo para conectar</h2>
+                <p style="color: #718096; margin-bottom: 2rem;">Hacé clic en el botón "Cargar Datos desde Sheets" para comenzar</p>
+                <button onclick="cargarDatos()" style="background: #1e2d3e; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: 600;">
+                    🚀 Cargar Datos desde Google Sheets
+                </button>
+            </div>
+        `;
+    </script>
+
+
+</body></html>
