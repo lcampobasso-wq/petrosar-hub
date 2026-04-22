@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0048)file:///C:/Users/Usuario/Downloads/index_20.html -->
-<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="es">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PETROSAR SA — Panel Central</title>
 <style>
@@ -262,32 +262,39 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; display: flex; height: 10
   <div class="sb-label">Módulos</div>
 
   <div class="sb-nav" id="sb-nav">
-    <button class="sb-btn" data-area="operaciones" onclick="selectArea(&#39;operaciones&#39;)">
+    <button class="sb-btn" data-area="operaciones"   onclick="selectArea('operaciones')">
       <div class="sb-btn-dot" style="background:#ccfbf1">🏭</div>
       <div class="sb-btn-texts">
         <span class="sb-btn-name">Operaciones</span>
-        <span class="sb-btn-count" id="cnt-operaciones">4 dashboards</span>
+        <span class="sb-btn-count" id="cnt-operaciones">—</span>
       </div>
     </button>
-    <button class="sb-btn" data-area="transporte" onclick="selectArea(&#39;transporte&#39;)">
+    <button class="sb-btn" data-area="transporte"    onclick="selectArea('transporte')">
       <div class="sb-btn-dot" style="background:#dbeafe">🚛</div>
       <div class="sb-btn-texts">
         <span class="sb-btn-name">Transporte de Personal</span>
-        <span class="sb-btn-count" id="cnt-transporte">2 dashboards</span>
+        <span class="sb-btn-count" id="cnt-transporte">—</span>
       </div>
     </button>
-    <button class="sb-btn" data-area="mantenimiento" onclick="selectArea(&#39;mantenimiento&#39;)">
+    <button class="sb-btn" data-area="mantenimiento" onclick="selectArea('mantenimiento')">
       <div class="sb-btn-dot" style="background:#ede9fe">⚙️</div>
       <div class="sb-btn-texts">
         <span class="sb-btn-name">Mantenimiento</span>
-        <span class="sb-btn-count" id="cnt-mantenimiento">1 dashboard</span>
+        <span class="sb-btn-count" id="cnt-mantenimiento">—</span>
       </div>
     </button>
-    <button class="sb-btn" data-area="estacion" onclick="selectArea(&#39;estacion&#39;)">
+    <button class="sb-btn" data-area="estacion" onclick="selectArea('estacion')">
       <div class="sb-btn-dot" style="background:#ffedd5">⛽</div>
       <div class="sb-btn-texts">
         <span class="sb-btn-name">Estación de Servicio</span>
-        <span class="sb-btn-count" id="cnt-estacion">0 dashboards</span>
+        <span class="sb-btn-count" id="cnt-estacion">—</span>
+      </div>
+    </button>
+    <button class="sb-btn" data-area="sgi" onclick="selectArea('sgi')">
+      <div class="sb-btn-dot" style="background:#e0f2fe">📋</div>
+      <div class="sb-btn-texts">
+        <span class="sb-btn-name">Sistema de Gestión</span>
+        <span class="sb-btn-count" id="cnt-sgi">—</span>
       </div>
     </button>
   </div>
@@ -313,7 +320,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; display: flex; height: 10
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
       <button class="topbar-back" id="back-btn" onclick="goBack()">← Volver</button>
-      <button class="btn-add" id="add-btn" onclick="openModal(null)">＋ Agregar dashboard</button>
+      <button class="btn-add"     id="add-btn"  onclick="openModal(null)">＋ Agregar dashboard</button>
     </div>
   </div>
 
@@ -340,7 +347,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; display: flex; height: 10
 
   <!-- IFRAME PANEL -->
   <div class="iframe-panel" id="p-iframe">
-    <iframe id="frm" src="./index_files/saved_resource.html" title="Dashboard"></iframe>
+    <iframe id="frm" src="about:blank" title="Dashboard"></iframe>
   </div>
 
 </div>
@@ -364,11 +371,11 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; display: flex; height: 10
           <option value="pendiente">⚪ Pendiente</option>
         </select>
       </div>
-      <div class="field"><label>Ícono</label><div class="icon-grid" id="ig"><button class="icon-opt" type="button">📊</button><button class="icon-opt" type="button">📋</button><button class="icon-opt" type="button">🚛</button><button class="icon-opt" type="button">🛻</button><button class="icon-opt" type="button">⚙️</button><button class="icon-opt" type="button">🔧</button><button class="icon-opt" type="button">🗂️</button><button class="icon-opt" type="button">📡</button><button class="icon-opt" type="button">🛡️</button><button class="icon-opt" type="button">📈</button><button class="icon-opt" type="button">🗺️</button><button class="icon-opt" type="button">🏗️</button><button class="icon-opt" type="button">⛽</button><button class="icon-opt" type="button">🔩</button><button class="icon-opt" type="button">📌</button><button class="icon-opt" type="button">🧾</button><button class="icon-opt" type="button">🚦</button><button class="icon-opt" type="button">🏭</button><button class="icon-opt" type="button">🔍</button><button class="icon-opt" type="button">📂</button></div></div>
+      <div class="field"><label>Ícono</label><div class="icon-grid" id="ig"></div></div>
     </div>
     <div class="m-ft">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      <button class="btn-ok" onclick="saveCard()">Guardar</button>
+      <button class="btn-ok"     onclick="saveCard()">Guardar</button>
     </div>
   </div>
 </div>
@@ -383,10 +390,11 @@ const AREAS = {
   transporte:    { label:"Transporte de Personal", color:"#2563eb", light:"#dbeafe" },
   mantenimiento: { label:"Mantenimiento",          color:"#7c3aed", light:"#ede9fe" },
   estacion:      { label:"Estación de Servicio",   color:"#c2410c", light:"#ffedd5" },
+  sgi:           { label:"Sistema de Gestión",     color:"#0369a1", light:"#e0f2fe" },
 };
 const SL = { disponible:"Disponible", desarrollo:"En desarrollo", piloto:"Piloto", pendiente:"Pendiente" };
 
-let data     = { operaciones:[], transporte:[], mantenimiento:[], estacion:[] };
+let data     = { operaciones:[], transporte:[], mantenimiento:[], estacion:[], sgi:[] };
 let editMode = false;
 let curArea  = null;
 let editing  = null;
@@ -576,6 +584,5 @@ async function delCard(id) {
 
 loadFromSupabase();
 </script>
-
-
-</body></html>
+</body>
+</html>
