@@ -417,7 +417,7 @@ async function sbFetch(path, opts={}) {
 async function loadFromSupabase() {
   const rows = await sbFetch("dashboards?order=orden.asc");
   if (!rows) return;
-  data = { operaciones:[], transporte:[], mantenimiento:[], estacion:[] };
+  data = { operaciones:[], transporte:[], mantenimiento:[], estacion:[], sgi:[] };
   rows.forEach(r => {
     if (data[r.area]) data[r.area].push({ id:r.id, name:r.name, desc:r.description||"", url:r.url||"#", status:r.status||"disponible", icon:r.icon||"📊" });
   });
@@ -586,3 +586,4 @@ loadFromSupabase();
 </script>
 </body>
 </html>
+
