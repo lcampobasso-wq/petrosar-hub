@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0073)file:///C:/Users/Usuario/Downloads/dashboard_sheets_integrado%20(21).html -->
+<!-- saved from url=(0075)file:///C:/Users/Usuario/Downloads/Dashboard_Transporte_2025-2026_v2_2.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Transporte 2025-2026</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="./Dashboard Transporte 2025-2026_files/chart.umd.min.js.descarga"></script>
+    <link href="./Dashboard Transporte 2025-2026_files/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f6; color: #1e293b; min-height: 100vh; }
@@ -14,12 +14,9 @@
         /* ── PETROSAR HEADER ── */
         .ps-header {
             background: linear-gradient(135deg, #1e2d3e 0%, #152333 100%);
-            padding: 14px 20px;
+            padding: 14px 24px;
             display: flex; align-items: center; gap: 14px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-            max-width: 1400px;
-            margin: 0 auto 20px;
-            border-radius: 16px;
         }
         .ps-logo { width: 38px; height: 38px; border-radius: 9px; overflow: hidden; flex-shrink: 0; }
         .ps-logo img { width: 100%; height: 100%; object-fit: contain; }
@@ -104,6 +101,17 @@
 </head>
 <body>
 
+<!-- PETROSAR HEADER -->
+<header class="ps-header">
+  <div class="ps-logo">
+    <img src="data:image/png;base64,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" alt="PETROSAR SA">
+  </div>
+  <div>
+    <div class="ps-header-brand">PETROSAR SA</div>
+    <div class="ps-header-title">🚛 Dashboard Transporte 2025-2026</div>
+  </div>
+</header>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loading" style="display: none;">
         <div class="loading-content">
@@ -113,16 +121,7 @@
     </div>
 
     <div class="container">
-        <!-- PETROSAR HEADER -->
-        <header class="ps-header">
-          <div class="ps-logo">
-            <img src="data:image/png;base64,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" alt="PETROSAR SA">
-          </div>
-          <div>
-            <div class="ps-header-brand">PETROSAR SA</div>
-            <div class="ps-header-title">🚛 Dashboard Transporte 2025-2026</div>
-          </div>
-        </header>
+        <!-- Panel de Configuración -->
         <div class="config-panel">
             <div class="config-row">
                 <div class="config-item">
@@ -140,7 +139,7 @@
             </div>
             <div style="margin-top: 10px;">
                 <span id="connection-status" class="status-badge status-connected"><i class="fas fa-check-circle"></i> Conectado</span>
-                <span id="last-update" style="margin-left: 15px; font-size: 12px; color: #666;">Última actualización: 15/4/2026, 10:54:17</span>
+                <span id="last-update" style="margin-left: 15px; font-size: 12px; color: #666;">Última actualización: 24/4/2026, 14:34:44</span>
             </div>
         </div>
 
@@ -148,12 +147,12 @@
             <div class="header-left">
                 <div class="company-icon"><i class="fas fa-truck"></i></div>
                 <div class="header-info">
-                    <h1 id="client-name">PS</h1>
+                    <h1 id="client-name">CONSOLIDADO</h1>
                     <div class="header-subtitle">
                         <span class="status-dot"></span>
                         <span>Datos Google Sheets</span>
                         <span>Año: <strong id="year-display">2026</strong></span>
-                        <span>Mes: <strong id="month-display">Enero</strong></span>
+                        <span>Mes: <strong id="month-display">Todos</strong></span>
                     </div>
                 </div>
             </div>
@@ -188,49 +187,49 @@
             <button class="nav-tab" data-client="PAE">PAE</button>
             <button class="nav-tab" data-client="BAKER">BAKER</button>
             <button class="nav-tab" data-client="NOVOMET">NOVOMET</button>
-            <button class="nav-tab active" data-client="PS">PS</button>
-            <button class="nav-tab" data-client="CONSOLIDADO">CONSOLIDADO</button>
+            <button class="nav-tab" data-client="PS">PS</button>
+            <button class="nav-tab active" data-client="CONSOLIDADO">CONSOLIDADO</button>
         </div>
 
         <div class="main-metrics">
             <div class="score-circle">
-                <div class="circle-progress" id="score-circle" style="--progress: 306deg; background: conic-gradient(rgb(76, 175, 80) 0deg, rgb(76, 175, 80) 306deg, rgb(224, 224, 224) 306deg, rgb(224, 224, 224) 360deg);">
+                <div class="circle-progress" id="score-circle" style="--progress: 306deg; background: conic-gradient(rgb(33, 150, 243) 0deg, rgb(33, 150, 243) 306deg, rgb(224, 224, 224) 306deg, rgb(224, 224, 224) 360deg);">
                     <div class="circle-inner">
-                        <div class="score-value" id="score" style="color: rgb(76, 175, 80);">85</div>
+                        <div class="score-value" id="score" style="color: rgb(33, 150, 243);">85</div>
                         <div class="score-label">SCORE</div>
                     </div>
                 </div>
-                <div class="excellence-badge"><i class="fas fa-star"></i><span id="performance">Sin Datos</span></div>
+                <div class="excellence-badge"><i class="fas fa-star"></i><span id="performance">Muy Bueno</span></div>
             </div>
-            <div class="main-metric"><div class="metric-value-large blue" id="km">54.320</div><div class="metric-label-large">KM Totales</div></div>
-            <div class="main-metric"><div class="metric-value-large green" id="accidentes">0</div><div class="metric-label-large">Accidentes<br>Registrables</div></div>
-            <div class="main-metric"><div class="metric-value-large purple" id="capacitacion">52h</div><div class="metric-label-large">Capacitación<br>Total horas</div></div>
+            <div class="main-metric"><div class="metric-value-large blue" id="km">665.741</div><div class="metric-label-large">KM Totales</div></div>
+            <div class="main-metric"><div class="metric-value-large green" id="accidentes">1</div><div class="metric-label-large">Accidentes<br>Registrables</div></div>
+            <div class="main-metric"><div class="metric-value-large purple" id="capacitacion">774h</div><div class="metric-label-large">Capacitación<br>Total horas</div></div>
         </div>
 
         <div class="secondary-metrics">
-            <div class="metric-card blue-border"><div class="metric-icon blue"><i class="fas fa-clock"></i></div><div class="metric-number blue" id="hht">2.500</div><div class="metric-title">HIT Total</div><div class="metric-meta">Horas trabajadas</div></div>
-            <div class="metric-card green-border"><div class="metric-icon green"><i class="fas fa-users"></i></div><div class="metric-number green" id="hab-personal">98%</div><div class="metric-title">Hab. Personal</div><div class="metric-meta">Meta: &gt;95%</div></div>
-            <div class="metric-card orange-border"><div class="metric-icon orange"><i class="fas fa-truck-moving"></i></div><div class="metric-number orange" id="hab-vehiculos">99%</div><div class="metric-title">Hab. Vehículos</div><div class="metric-meta">Meta: &gt;95%</div></div>
-            <div class="metric-card purple-border"><div class="metric-icon purple"><i class="fas fa-tachometer-alt"></i></div><div class="metric-number purple" id="excesos">4</div><div class="metric-title">Excesos</div><div class="metric-meta">Promedio</div></div>
-            <div class="metric-card orange-border"><div class="metric-icon orange"><i class="fas fa-exclamation-triangle"></i></div><div class="metric-number orange" id="riesgo">13%</div><div class="metric-title">Riesgo No Aceptable</div><div class="metric-meta">Meta: &lt; 20%</div></div>
+            <div class="metric-card blue-border"><div class="metric-icon blue"><i class="fas fa-clock"></i></div><div class="metric-number blue" id="hht">93.775</div><div class="metric-title">HIT Total</div><div class="metric-meta">Horas trabajadas</div></div>
+            <div class="metric-card green-border"><div class="metric-icon green"><i class="fas fa-users"></i></div><div class="metric-number green" id="hab-personal">100%</div><div class="metric-title">Hab. Personal</div><div class="metric-meta">Meta: &gt;95%</div></div>
+            <div class="metric-card orange-border"><div class="metric-icon orange"><i class="fas fa-truck-moving"></i></div><div class="metric-number orange" id="hab-vehiculos">96%</div><div class="metric-title">Hab. Vehículos</div><div class="metric-meta">Meta: &gt;95%</div></div>
+            <div class="metric-card purple-border"><div class="metric-icon purple"><i class="fas fa-tachometer-alt"></i></div><div class="metric-number purple" id="excesos">21</div><div class="metric-title">Excesos</div><div class="metric-meta">Promedio</div></div>
+            <div class="metric-card orange-border"><div class="metric-icon orange"><i class="fas fa-exclamation-triangle"></i></div><div class="metric-number orange" id="riesgo">38%</div><div class="metric-title">Riesgo No Aceptable</div><div class="metric-meta">Meta: &lt; 20%</div></div>
             <div class="metric-card red-border"><div class="metric-icon red"><i class="fas fa-calculator"></i></div><div class="metric-number red" id="hhc">3.3</div><div class="metric-title">HHC</div><div class="metric-meta">Meta: &gt; 3.0</div></div>
-            <div class="metric-card pink-border"><div class="metric-icon pink"><i class="fas fa-clipboard-check"></i></div><div class="metric-number pink" id="nc-int">0</div><div class="metric-title">NC Internas</div><div class="metric-meta">Meta: ≤5</div></div>
-            <div class="metric-card red-border"><div class="metric-icon red"><i class="fas fa-exclamation-circle"></i></div><div class="metric-number red" id="nc-ext">0</div><div class="metric-title">NC Externas</div><div class="metric-meta">Meta: ≤3</div></div>
+            <div class="metric-card pink-border"><div class="metric-icon pink"><i class="fas fa-clipboard-check"></i></div><div class="metric-number pink" id="nc-int">5</div><div class="metric-title">NC Internas</div><div class="metric-meta">Meta: ≤5</div></div>
+            <div class="metric-card red-border"><div class="metric-icon red"><i class="fas fa-exclamation-circle"></i></div><div class="metric-number red" id="nc-ext">3</div><div class="metric-title">NC Externas</div><div class="metric-meta">Meta: ≤3</div></div>
         </div>
 
         <div class="charts-section">
-            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-chart-line"></i>Tendencia Operacional</h3><canvas id="chart1" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="930" height="420"></canvas></div>
-            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-chart-bar"></i>Excesos de Velocidad</h3><canvas id="chart2" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="930" height="420"></canvas></div>
+            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-chart-line"></i>Tendencia Operacional</h3><canvas id="chart1" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="465" height="210"></canvas></div>
+            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-chart-bar"></i>Excesos de Velocidad</h3><canvas id="chart2" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="465" height="210"></canvas></div>
         </div>
 
         <div class="charts-section">
-            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-exclamation-circle"></i>Índice de Accidentes Registrables (Rolling 12 meses)</h3><canvas id="chart3" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="930" height="420"></canvas></div>
-            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-exclamation-triangle"></i>Índice de Accidentes No Registrables (Rolling 12 meses)</h3><canvas id="chart4" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="930" height="420"></canvas></div>
+            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-exclamation-circle"></i>Índice de Accidentes Registrables (Rolling 12 meses)</h3><canvas id="chart3" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="465" height="210"></canvas></div>
+            <div class="chart-container"><h3 class="chart-title"><i class="fas fa-exclamation-triangle"></i>Índice de Accidentes No Registrables (Rolling 12 meses)</h3><canvas id="chart4" class="chart-canvas" style="box-sizing: border-box; display: block; height: 280px; width: 620px;" width="465" height="210"></canvas></div>
         </div>
 
         <div class="comparative-section">
             <h2 class="section-title">Comparativo General</h2>
-            <div class="comparative-cards" id="cards"><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#8b5cf6"><i class="fas fa-truck"></i></div><div class="card-info"><h3>CONSOLIDADO</h3><span class="performance-badge needs-improvement">Bueno</span></div></div><div class="card-score" style="color:#8b5cf6">80<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">433.617</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.0</div></div></div></div><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#6366f1"><i class="fas fa-truck"></i></div><div class="card-info"><h3>PAE</h3><span class="performance-badge good">Muy Bueno</span></div></div><div class="card-score" style="color:#6366f1">85<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">233.726</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.1</div></div></div></div><div class="comparative-card current"><div class="card-header"><div class="card-icon" style="background:#f59e0b"><i class="fas fa-truck"></i></div><div class="card-info"><h3>PS</h3><span class="performance-badge good">Muy Bueno</span></div></div><div class="card-score" style="color:#f59e0b">85<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">98.654</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.1</div></div></div></div><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#3b82f6"><i class="fas fa-truck"></i></div><div class="card-info"><h3>BAKER</h3><span class="performance-badge needs-improvement">Bueno</span></div></div><div class="card-score" style="color:#3b82f6">83<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">63.937</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.0</div></div></div></div><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#10b981"><i class="fas fa-truck"></i></div><div class="card-info"><h3>NOVOMET</h3><span class="performance-badge needs-improvement">Regular</span></div></div><div class="card-score" style="color:#10b981">68<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">37.300</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">2.5</div></div></div></div></div>
+            <div class="comparative-cards" id="cards"><div class="comparative-card current"><div class="card-header"><div class="card-icon" style="background:#8b5cf6"><i class="fas fa-truck"></i></div><div class="card-info"><h3>CONSOLIDADO</h3><span class="performance-badge good">Muy Bueno</span></div></div><div class="card-score" style="color:#2196F3">85<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">665.741</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.3</div></div></div></div><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#6366f1"><i class="fas fa-truck"></i></div><div class="card-info"><h3>PAE</h3><span class="performance-badge excellent">Excelente</span></div></div><div class="card-score" style="color:#4CAF50">100<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">348.960</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.3</div></div></div></div><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#10b981"><i class="fas fa-truck"></i></div><div class="card-info"><h3>NOVOMET</h3><span class="performance-badge excellent">Excelente</span></div></div><div class="card-score" style="color:#4CAF50">100<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">64.001</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.0</div></div></div></div><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#f59e0b"><i class="fas fa-truck"></i></div><div class="card-info"><h3>PS</h3><span class="performance-badge excellent">Excelente</span></div></div><div class="card-score" style="color:#4CAF50">100<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">154.688</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.8</div></div></div></div><div class="comparative-card"><div class="card-header"><div class="card-icon" style="background:#3b82f6"><i class="fas fa-truck"></i></div><div class="card-info"><h3>BAKER</h3><span class="performance-badge good">Muy Bueno</span></div></div><div class="card-score" style="color:#2196F3">85<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">98.092</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">3.3</div></div></div></div></div>
         </div>
     </div>
 
@@ -245,10 +244,10 @@ const mesesCompletos = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', '
 
 // Cargar configuración guardada
 function cargarConfiguracion() {
-    const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbxzKRWhWfuOX96D1O8iZ63P5sUTJFaGrERm-fQbCyo11jOGDkfZiOcDK3YbPetvIzYZmw/exec';
-    const url = localStorage.getItem('sheetsURL') || DEFAULT_URL;
+    const url = localStorage.getItem('sheetsURL');
     if (url) {
-        document.getElementById('sheets-url').value = url;        return url;
+        document.getElementById('sheets-url').value = url;
+        return url;
     }
     return null;
 }
@@ -302,6 +301,82 @@ async function cargarDatosDesdeSheets() {
     }
 }
 
+// ── CÁLCULO DE SCORE ────────────────────────────────────────────────────────
+// Base 100. Recibe array de objetos mes con datos y totales acumulados.
+// Los valores de hab_personal / hab_vehiculos y riesgo pueden venir como
+// fracción (0.98) o porcentaje (98); la función los normaliza automáticamente.
+function calcularScore(mesesConDatos, totalAccReg, totalNCExt) {
+    if (!mesesConDatos || mesesConDatos.length === 0) {
+        return { score: 0, performance: 'Sin Datos' };
+    }
+
+    const norm = v => v > 1 ? v : v * 100; // 0.98 → 98  |  98 → 98
+
+    // ── PENALIZACIONES (calculadas sobre base 100) ───────────────────────────
+    let penalizaciones = 0;
+
+    // 1. Accidentes registrables: cada uno = -15 (NO compensable con bonos)
+    const penAcc = (totalAccReg || 0) * 15;
+    penalizaciones += penAcc;
+
+    // 2. Habilitaciones
+    const avgHabP = norm(mesesConDatos.reduce((s, m) => s + (m.hab_personal || 0), 0) / mesesConDatos.length);
+    const avgHabV = norm(mesesConDatos.reduce((s, m) => s + (m.hab_vehiculos || 0), 0) / mesesConDatos.length);
+    if (avgHabP < 95) penalizaciones += 15;
+    if (avgHabV < 95) penalizaciones += 10;
+
+    // 4. HHC
+    const hhcVals = mesesConDatos.map(m => {
+        const p = m.cantidad_personas > 0 ? m.cantidad_personas : 1;
+        return (m.hhs_capacitacion || 0) / p;
+    });
+    const avgHHC = hhcVals.reduce((s, v) => s + v, 0) / hhcVals.length;
+    if (avgHHC < 3.0) penalizaciones += 10;
+
+    // 5. NC Externas
+    const nc = totalNCExt || 0;
+    if      (nc >= 6) penalizaciones += 10;
+    else if (nc >= 3) penalizaciones += 5;
+
+    // ── BONOS (NO pueden recuperar puntos perdidos por accidentes) ────────────
+    let bonos = 0;
+
+    // 3. Riesgo no aceptable
+    const avgRiesgo = norm(mesesConDatos.reduce((s, m) => s + (m.riesgo_no_aceptable || 0), 0) / mesesConDatos.length);
+    if      (avgRiesgo <= 10) bonos += 15;
+    else if (avgRiesgo <= 20) bonos += 10;
+    else if (avgRiesgo <= 30) penalizaciones += 10;  // penalización, no bono negativo
+    else                      penalizaciones += 15;
+
+    // HHC > 3.1
+    if (avgHHC > 3.1) bonos += 10;
+
+    // ── SCORE FINAL: bonos no pueden compensar penalización de accidentes ─────
+    const scoreConBonos   = Math.min(100, 100 - penalizaciones + bonos);
+    const scoreSinAcc     = Math.min(100, 100 - (penalizaciones - penAcc) + bonos);
+    // El score no puede superar (100 - penAcc): los accidentes son inamovibles
+    const scoreTecho      = 100 - penAcc;
+    const score           = Math.min(scoreTecho, Math.max(0, scoreConBonos));
+
+    let performance;
+    if      (score >= 90) performance = 'Excelente';
+    else if (score >= 80) performance = 'Muy Bueno';
+    else if (score >= 70) performance = 'Bueno';
+    else if (score >= 60) performance = 'Requiere Atención';
+    else                  performance = 'Crítico';
+
+    return { score, performance };
+}
+
+function colorScore(score) {
+    if (score >= 90) return '#4CAF50';   // verde
+    if (score >= 80) return '#2196F3';   // azul
+    if (score >= 70) return '#3F51B5';   // índigo
+    if (score >= 60) return '#FF9800';   // naranja
+    return '#F44336';                    // rojo
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 // Procesar datos de Sheets al formato del dashboard
 function procesarDatosSheets(datos) {
     const resultado = {};
@@ -353,9 +428,12 @@ function procesarDatosSheets(datos) {
             const totalNCInt = meses.reduce((sum, mes) => sum + mes.nc_internas, 0);
             const totalNCExt = meses.reduce((sum, mes) => sum + mes.nc_externas, 0);
             
+            // Calcular score dinámicamente con la lógica de penalizaciones
+            const scoreResult = calcularScore(mesesConDatos, totalAccReg, totalNCExt);
+
             resultado[cliente][año] = {
-                s: datosAño.score,
-                p: datosAño.performance,
+                s: scoreResult.score,
+                p: scoreResult.performance,
                 km: formatNumber(totalKm),
                 a: totalAccReg,
                 anr: totalAccNoReg,
@@ -545,7 +623,7 @@ function u() {
     
     const pr = (datosVista.s / 100) * 360;
     document.getElementById('score-circle').style.setProperty('--progress', pr + 'deg');
-    const sc = datosVista.s < 70 ? '#F44336' : datosVista.s < 85 ? '#FF9800' : '#4CAF50';
+    const sc = colorScore(datosVista.s);
     document.getElementById('score-circle').style.background = 'conic-gradient(' + sc + ' 0deg,' + sc + ' ' + pr + 'deg,#e0e0e0 ' + pr + 'deg,#e0e0e0 360deg)';
     document.getElementById('score').style.color = sc;
     
@@ -556,17 +634,23 @@ function u() {
     uca();
 }
 
-// Filtrar datos por mes específico
+// Filtrar datos por mes específico — score recalculado para ese mes puntual
 function filtrarPorMes(datos, mesIndex) {
     const mesData = datos.mesesData[mesIndex];
     
     // Calcular HHC para este mes específico: HHC = HHS_capacitación / cantidad_personas
     const cantPersonas = mesData.cantidad_personas || 1;
     const hhcMes = cantPersonas > 0 ? (mesData.hhs_capacitacion || 0) / cantPersonas : 0;
-    
+
+    // Recalcular score solo para este mes (si tiene datos)
+    let scoreRes = { score: 0, performance: 'Sin Datos' };
+    if (mesData.km_recorridos > 0) {
+        scoreRes = calcularScore([mesData], mesData.acc_registrables, mesData.nc_externas);
+    }
+
     return {
-        s: datos.s,
-        p: datos.p,
+        s: scoreRes.score,
+        p: scoreRes.performance,
         km: formatNumber(mesData.km_recorridos), // Solo del mes
         a: mesData.acc_registrables, // Solo del mes
         anr: mesData.acc_no_registrables, // Solo del mes
@@ -768,25 +852,12 @@ function ccc(n, d, ic) {
     
     const score = d.s || 0;
     
-    // Calcular performance basándose en el score si no viene definido
-    let performance = d.p;
-    if (!performance || performance === 'Sin Datos') {
-        if (score >= 95) {
-            performance = 'Excelente';
-        } else if (score >= 85) {
-            performance = 'Muy Bueno';
-        } else if (score >= 70) {
-            performance = 'Bueno';
-        } else if (score >= 50) {
-            performance = 'Regular';
-        } else {
-            performance = 'Necesita Mejorar';
-        }
-    }
+    // Performance ya calculada dinámicamente en calcularScore()
+    let performance = d.p || 'Sin Datos';
     
     const hasData = d.km && d.km !== '0';
     
-    cd.innerHTML = '<div class="card-header"><div class="card-icon" style="background:' + d.co + '"><i class="fas fa-truck"></i></div><div class="card-info"><h3>' + n + '</h3><span class="performance-badge ' + (score >= 95 ? 'excellent' : score >= 85 ? 'good' : 'needs-improvement') + '">' + performance + '</span></div></div><div class="card-score" style="color:' + (score > 0 ? d.co : '#ccc') + '">' + score + '<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">' + (hasData ? d.km : '0') + '</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">' + (d.hc || '0.0') + '</div></div></div>';
+    cd.innerHTML = '<div class="card-header"><div class="card-icon" style="background:' + d.co + '"><i class="fas fa-truck"></i></div><div class="card-info"><h3>' + n + '</h3><span class="performance-badge ' + (score >= 90 ? 'excellent' : score >= 80 ? 'good' : score >= 70 ? 'good' : 'needs-improvement') + '">' + performance + '</span></div></div><div class="card-score" style="color:' + (score > 0 ? colorScore(score) : '#ccc') + '">' + score + '<span style="font-size:16px;color:#666">Score</span></div><div class="card-metrics"><div class="card-metric"><div class="card-metric-label">KM Totales</div><div class="card-metric-value">' + (hasData ? d.km : '0') + '</div></div><div class="card-metric"><div class="card-metric-label">HHC</div><div class="card-metric-value">' + (d.hc || '0.0') + '</div></div></div>';
     
     cd.onclick = () => {
         cc = n;
@@ -825,9 +896,12 @@ document.getElementById('month-selector').addEventListener('change', e => {
 // Inicializar
 window.addEventListener('load', () => {
     cargarConfiguracion();
-    const url = document.getElementById('sheets-url').value || 'https://script.google.com/macros/s/AKfycbxzKRWhWfuOX96D1O8iZ63P5sUTJFaGrERm-fQbCyo11jOGDkfZiOcDK3YbPetvIzYZmw/exec';
-    document.getElementById('sheets-url').value = url;
-    cargarDatosDesdeSheets();
+    const url = document.getElementById('sheets-url').value;
+    if (url) {
+        cargarDatosDesdeSheets();
+    } else {
+        document.getElementById('loading').style.display = 'none';
+    }
 });
     </script>
 
