@@ -495,7 +495,7 @@ function renderCards(aid) {
 
 function openDash(d) {
   if (!d.url || d.url==="#") return;
-  const external = ["datastudio.google.com","lookerstudio.google.com","script.google.com","fleetchek-tpte.web.app","hosted.app","No%20Conformidades","No Conformidades","nc-manager.vercel.app"];
+ const external = ["datastudio.google.com","lookerstudio.google.com","script.google.com","fleetchek-tpte.web.app","hosted.app","No%20Conformidades","No Conformidades","nc-manager.vercel.app","dashboard_transporte"];
   if (external.some(e => d.url.includes(e))) { window.open(d.url, "_blank"); return; }
   document.getElementById("frm").src = d.url;
   document.getElementById("t-title").textContent = d.name;
