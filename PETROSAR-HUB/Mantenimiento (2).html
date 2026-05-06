@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indicadores Mantenimiento Ene–Abr 2026 — PETROSAR SA</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ps-bg:         #f0f2f6;
+      --ps-header-bg:  #1e2d3e;
+      --ps-header-bg2: #192638;
+      --ps-card:       #ffffff;
+      --ps-border:     #e2e8f0;
+      --ps-text:       #1a202c;
+      --ps-muted:      #718096;
+      --ps-font-title: 'Inter', sans-serif;
+      --ps-font-body:  'DM Sans', sans-serif;
+      --ps-shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+      --ps-shadow-md:  0 4px 12px rgba(0,0,0,0.08);
+      --ps-radius-lg:  14px;
+      --ps-radius-md:  10px;
+      --c-corr: #2b4c7e;
+      --c-prev: #607d8b;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--ps-font-body); background: var(--ps-bg); color: var(--ps-text); font-size: 14px; min-height: 100vh; }
+    .ps-wrapper { max-width: 1280px; margin: 0 auto; }
+
+    /* ── HEADER ── */
+    .ps-header {
+      background: linear-gradient(160deg, #253445 0%, var(--ps-header-bg2) 100%);
+      padding: 22px 28px 26px; position: relative; overflow: hidden;
+    }
+    .ps-header::before { content:''; position:absolute; top:-60px; right:-60px; width:220px; height:220px; background:rgba(255,255,255,0.03); border-radius:50%; }
+    .ps-header::after  { content:''; position:absolute; bottom:-40px; left:30%; width:160px; height:160px; background:rgba(232,160,32,0.06); border-radius:50%; }
+    .ps-header-top { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+    .ps-logo img { width:40px; height:40px; object-fit:contain; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+    .ps-header-title { font-family:var(--ps-font-title); font-weight:800; font-size:22px; color:white; letter-spacing:-0.3px; }
+    .ps-header-sub { font-size:12px; color:rgba(255,255,255,0.55); margin-top:2px; margin-bottom:20px; }
+    .ps-header-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; position:relative; z-index:1; }
+    .ps-header-kpi { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:var(--ps-radius-lg); padding:12px 16px; }
+    .ps-header-kpi-value { font-family:var(--ps-font-title); font-weight:800; font-size:22px; color:white; line-height:1.1; }
+    .ps-header-kpi-label { font-size:11px; color:rgba(255,255,255,0.6); margin-top:3px; text-transform:uppercase; letter-spacing:0.5px; }
+
+    /* ── TABS ── */
+    .ps-tabs { display:flex; background:white; border-bottom:1px solid var(--ps-border); padding:0 20px; box-shadow:var(--ps-shadow-sm); flex-wrap:wrap; }
+    .ps-tab { padding:13px 20px; font-family:var(--ps-font-body); font-size:13px; font-weight:500; color:var(--ps-muted); cursor:pointer; border-bottom:3px solid transparent; transition:color 0.15s,border-color 0.15s; background:none; border-top:none; border-left:none; border-right:none; white-space:nowrap; }
+    .ps-tab:hover { color:var(--ps-text); }
+    .ps-tab.active { color:var(--ps-header-bg); border-bottom-color:var(--ps-header-bg); font-weight:600; }
+
+    /* ── MAIN ── */
+    .ps-main { padding: 20px 0; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    /* ── KPI CARDS ── */
+    .ps-kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:16px; padding:0 28px; }
+    .ps-card { background:var(--ps-card); border:1px solid var(--ps-border); border-radius:var(--ps-radius-lg); padding:18px 14px; box-shadow:var(--ps-shadow-sm); text-align:center; transition:box-shadow 0.2s,transform 0.15s; }
+    .ps-card:hover { box-shadow:var(--ps-shadow-md); transform:translateY(-2px); }
+    .ps-card-icon { width:44px; height:44px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:20px; margin:0 auto 10px; }
+    .ps-icon-blue   { background:#90adc4; }
+    .ps-icon-red    { background:#8fa3b5; }
+    .ps-icon-yellow { background:#a8bac7; }
+    .ps-icon-green  { background:#7fa0b5; }
+    .ps-icon-orange { background:#5e8aa4; }
+    .ps-card-label { font-size:10px; font-weight:600; color:var(--ps-muted); text-transform:uppercase; letter-spacing:1.2px; margin-bottom:6px; }
+    .ps-card-value { font-family:var(--ps-font-title); font-weight:800; font-size:26px; color:var(--ps-text); line-height:1.1; }
+
+    /* ── CONTENT CARDS ── */
+    .ps-content-card { background:var(--ps-card); border-left:none; border-right:none; border-top:1px solid var(--ps-border); border-bottom:1px solid var(--ps-border); padding:20px 28px; box-shadow:var(--ps-shadow-sm); margin-bottom:16px; }
+    .ps-content-card-title { font-family:var(--ps-font-title); font-weight:700; font-size:13px; color:var(--ps-text); margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--ps-border); }
+
+    /* ── CHARTS ── */
+    .charts-row { display:grid; grid-template-columns:1fr 1fr; gap:0; margin-bottom:0; }
+    .charts-row .ps-content-card { border-radius:0; }
+    .charts-row .ps-content-card:first-child { border-right:1px solid var(--ps-border); }
+    .chart-wrapper { position:relative; height:220px; width:100%; }
+
+    /* ── TABLA ── */
+    .ps-table-wrap { overflow-x:auto; border-radius:var(--ps-radius-md); border:1px solid var(--ps-border); }
+    .ps-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .ps-table th { text-align:left; padding:10px 16px; font-family:var(--ps-font-title); font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--ps-muted); background:#f7fafc; border-bottom:1px solid var(--ps-border); }
+    .ps-table td { padding:10px 16px; border-bottom:1px solid var(--ps-border); color:var(--ps-text); font-weight:500; }
+    .ps-table tr:last-child td { border-bottom:none; }
+    .ps-table tr:hover td { background:#f7fafc; }
+    .ps-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+    .ps-badge-danger { background:#dce6f0; color:#1e3a5f; }
+    .ps-badge-neutral { background:#e8edf3; color:#3a5068; }
+
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:var(--ps-bg); }
+    ::-webkit-scrollbar-thumb { background:#cbd5e0; border-radius:3px; }
+
+    @media (max-width:900px) {
+      .charts-row { grid-template-columns:1fr; }
+      .charts-row .ps-content-card:first-child { border-right:none; }
+    }
+  </style>
+</head>
+<body>
+<div class="ps-wrapper">
+
+  <!-- HEADER -->
+  <header class="ps-header">
+    <div class="ps-header-top">
+      <div class="ps-logo">
+        <img src="data:image/png;base64,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" alt="PETROSAR SA" />
+      </div>
+      <div>
+        <div class="ps-header-title">Indicadores Gestión de Mantenimiento 2026</div>
+        <div class="ps-header-sub">PETROSAR SA · Acumulado Enero – Abril 2026</div>
+      </div>
+    </div>
+    <div class="ps-header-kpis">
+      <div class="ps-header-kpi"><div class="ps-header-kpi-value">937</div><div class="ps-header-kpi-label">Total Mantenimientos</div></div>
+      <div class="ps-header-kpi"><div class="ps-header-kpi-value">798</div><div class="ps-header-kpi-label">Correctivos</div></div>
+      <div class="ps-header-kpi"><div class="ps-header-kpi-value">139</div><div class="ps-header-kpi-label">Preventivos</div></div>
+      <div class="ps-header-kpi"><div class="ps-header-kpi-value">8.5</div><div class="ps-header-kpi-label">Días entre fallas</div></div>
+      <div class="ps-header-kpi"><div class="ps-header-kpi-value">1.48</div><div class="ps-header-kpi-label">Días en taller</div></div>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="ps-tabs">
+    <button class="ps-tab active" onclick="showTab('acumulado',this)">📊 Acumulado</button>
+    <button class="ps-tab" onclick="showTab('enero',this)">📅 Enero</button>
+    <button class="ps-tab" onclick="showTab('febrero',this)">📅 Febrero</button>
+    <button class="ps-tab" onclick="showTab('marzo',this)">📅 Marzo</button>
+    <button class="ps-tab" onclick="showTab('abril',this)">📅 Abril</button>
+  </div>
+
+  <main class="ps-main">
+
+    <!-- ═══ ACUMULADO ═══ -->
+    <div id="acumulado" class="tab-content active">
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">📋 Ranking por Empresa — Ene a Abr</div>
+        <div class="ps-table-wrap">
+          <table class="ps-table">
+            <thead><tr><th>Empresa</th><th>Correctivos</th><th>Preventivos</th><th>Total</th><th>% Part.</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Pan American Energy (PAE)</strong></td><td><span class="ps-badge ps-badge-danger">430</span></td><td><span class="ps-badge ps-badge-neutral">79</span></td><td><strong>509</strong></td><td>54.3%</td></tr>
+              <tr><td><strong>Novomet (NOV)</strong></td><td><span class="ps-badge ps-badge-danger">166</span></td><td><span class="ps-badge ps-badge-neutral">30</span></td><td><strong>196</strong></td><td>20.9%</td></tr>
+              <tr><td><strong>Baker Hughes (BAK)</strong></td><td><span class="ps-badge ps-badge-danger">154</span></td><td><span class="ps-badge ps-badge-neutral">22</span></td><td><strong>176</strong></td><td>18.8%</td></tr>
+              <tr><td><strong>Petrosar (PS)</strong></td><td><span class="ps-badge ps-badge-danger">48</span></td><td><span class="ps-badge ps-badge-neutral">8</span></td><td><strong>56</strong></td><td>6.0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="ps-content-card">
+          <div class="ps-content-card-title">🔴 Top 10 Fallas Acumuladas</div>
+          <div class="chart-wrapper"><canvas id="fAcuTop10"></canvas></div>
+        </div>
+        <div class="ps-content-card">
+          <div class="ps-content-card-title">📈 Evolución Correctivo vs Preventivo</div>
+          <div class="chart-wrapper"><canvas id="evolAcuChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ENERO ═══ -->
+    <div id="enero" class="tab-content">
+      <div class="ps-kpi-grid">
+        <div class="ps-card"><div class="ps-card-icon ps-icon-blue">🔧</div><div class="ps-card-label">Total Mant.</div><div class="ps-card-value">252</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-green">📅</div><div class="ps-card-label">Días entre fallas</div><div class="ps-card-value">8.2</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-orange">🏭</div><div class="ps-card-label">Días en taller</div><div class="ps-card-value">1.4</div></div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">📋 Detalle Enero por Cliente</div>
+        <div class="ps-table-wrap">
+          <table class="ps-table">
+            <thead><tr><th>Cliente</th><th>Correctivos</th><th>Preventivos</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td><strong>PAE</strong></td><td><span class="ps-badge ps-badge-danger">119</span></td><td><span class="ps-badge ps-badge-neutral">19</span></td><td><strong>138</strong></td></tr>
+              <tr><td><strong>NOV</strong></td><td><span class="ps-badge ps-badge-danger">45</span></td><td><span class="ps-badge ps-badge-neutral">7</span></td><td><strong>52</strong></td></tr>
+              <tr><td><strong>BAK</strong></td><td><span class="ps-badge ps-badge-danger">42</span></td><td><span class="ps-badge ps-badge-neutral">6</span></td><td><strong>48</strong></td></tr>
+              <tr><td><strong>PS</strong></td><td><span class="ps-badge ps-badge-danger">12</span></td><td><span class="ps-badge ps-badge-neutral">2</span></td><td><strong>14</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">🔴 Top 10 Fallas — Enero</div>
+        <div class="chart-wrapper"><canvas id="fEneTop10"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ FEBRERO ═══ -->
+    <div id="febrero" class="tab-content">
+      <div class="ps-kpi-grid">
+        <div class="ps-card"><div class="ps-card-icon ps-icon-blue">🔧</div><div class="ps-card-label">Total Mant.</div><div class="ps-card-value">238</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-green">📅</div><div class="ps-card-label">Días entre fallas</div><div class="ps-card-value">8.4</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-orange">🏭</div><div class="ps-card-label">Días en taller</div><div class="ps-card-value">1.4</div></div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">📋 Detalle Febrero por Cliente</div>
+        <div class="ps-table-wrap">
+          <table class="ps-table">
+            <thead><tr><th>Cliente</th><th>Correctivos</th><th>Preventivos</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td><strong>PAE</strong></td><td><span class="ps-badge ps-badge-danger">108</span></td><td><span class="ps-badge ps-badge-neutral">22</span></td><td><strong>130</strong></td></tr>
+              <tr><td><strong>NOV</strong></td><td><span class="ps-badge ps-badge-danger">42</span></td><td><span class="ps-badge ps-badge-neutral">8</span></td><td><strong>50</strong></td></tr>
+              <tr><td><strong>BAK</strong></td><td><span class="ps-badge ps-badge-danger">39</span></td><td><span class="ps-badge ps-badge-neutral">5</span></td><td><strong>44</strong></td></tr>
+              <tr><td><strong>PS</strong></td><td><span class="ps-badge ps-badge-danger">12</span></td><td><span class="ps-badge ps-badge-neutral">2</span></td><td><strong>14</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">🔴 Top 10 Fallas — Febrero</div>
+        <div class="chart-wrapper"><canvas id="fFebTop10"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ MARZO ═══ -->
+    <div id="marzo" class="tab-content">
+      <div class="ps-kpi-grid">
+        <div class="ps-card"><div class="ps-card-icon ps-icon-blue">🔧</div><div class="ps-card-label">Total Mant.</div><div class="ps-card-value">232</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-green">📅</div><div class="ps-card-label">Días entre fallas</div><div class="ps-card-value">8.8</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-orange">🏭</div><div class="ps-card-label">Días en taller</div><div class="ps-card-value">1.5</div></div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">📋 Detalle Marzo por Cliente</div>
+        <div class="ps-table-wrap">
+          <table class="ps-table">
+            <thead><tr><th>Cliente</th><th>Correctivos</th><th>Preventivos</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td><strong>PAE</strong></td><td><span class="ps-badge ps-badge-danger">105</span></td><td><span class="ps-badge ps-badge-neutral">18</span></td><td><strong>123</strong></td></tr>
+              <tr><td><strong>NOV</strong></td><td><span class="ps-badge ps-badge-danger">41</span></td><td><span class="ps-badge ps-badge-neutral">8</span></td><td><strong>49</strong></td></tr>
+              <tr><td><strong>BAK</strong></td><td><span class="ps-badge ps-badge-danger">40</span></td><td><span class="ps-badge ps-badge-neutral">6</span></td><td><strong>46</strong></td></tr>
+              <tr><td><strong>PS</strong></td><td><span class="ps-badge ps-badge-danger">12</span></td><td><span class="ps-badge ps-badge-neutral">2</span></td><td><strong>14</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">🔴 Top 10 Fallas — Marzo</div>
+        <div class="chart-wrapper"><canvas id="fMarTop10"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══ ABRIL ═══ -->
+    <div id="abril" class="tab-content">
+      <div class="ps-kpi-grid">
+        <div class="ps-card"><div class="ps-card-icon ps-icon-blue">🔧</div><div class="ps-card-label">Total Mant.</div><div class="ps-card-value">215</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-green">📅</div><div class="ps-card-label">Días entre fallas</div><div class="ps-card-value">8.9</div></div>
+        <div class="ps-card"><div class="ps-card-icon ps-icon-orange">🏭</div><div class="ps-card-label">Días en taller</div><div class="ps-card-value">1.6</div></div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">📋 Detalle Abril por Cliente</div>
+        <div class="ps-table-wrap">
+          <table class="ps-table">
+            <thead><tr><th>Cliente</th><th>Correctivos</th><th>Preventivos</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td><strong>PAE</strong></td><td><span class="ps-badge ps-badge-danger">98</span></td><td><span class="ps-badge ps-badge-neutral">20</span></td><td><strong>118</strong></td></tr>
+              <tr><td><strong>NOV</strong></td><td><span class="ps-badge ps-badge-danger">38</span></td><td><span class="ps-badge ps-badge-neutral">7</span></td><td><strong>45</strong></td></tr>
+              <tr><td><strong>BAK</strong></td><td><span class="ps-badge ps-badge-danger">33</span></td><td><span class="ps-badge ps-badge-neutral">5</span></td><td><strong>38</strong></td></tr>
+              <tr><td><strong>PS</strong></td><td><span class="ps-badge ps-badge-danger">12</span></td><td><span class="ps-badge ps-badge-neutral">2</span></td><td><strong>14</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ps-content-card">
+        <div class="ps-content-card-title">🔴 Top 10 Fallas — Abril</div>
+        <div class="chart-wrapper"><canvas id="fAbrTop10"></canvas></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.ps-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  const top10Labels = ['Sist. Eléctrico','Filtros/Aceite','Frenos','Neumáticos','Hidráulica','Suspensión','Carrocería','Transmisión','Inyección','Refrigeración'];
+
+  const horizOpts = {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#f0f2f6' }, ticks: { font: { family: 'DM Sans', size: 11 } } },
+      y: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 } } }
+    }
+  };
+
+  const barOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { font: { family: 'DM Sans' } } } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { family: 'DM Sans' } } },
+      y: { grid: { color: '#f0f2f6' }, ticks: { font: { family: 'DM Sans' } } }
+    }
+  };
+
+  // Acumulado
+  new Chart(document.getElementById('fAcuTop10'), {
+    type: 'bar',
+    data: { labels: top10Labels, datasets: [{ data: [145,122,98,85,76,60,54,42,38,30], backgroundColor: 'rgba(30,45,62,0.72)', borderRadius: 4 }] },
+    options: horizOpts
+  });
+  new Chart(document.getElementById('evolAcuChart'), {
+    type: 'bar',
+    data: { labels: ['Ene','Feb','Mar','Abr'], datasets: [
+      { label: 'Correctivos', data: [218,201,198,181], backgroundColor: '#2b4c7e', borderRadius: 5 },
+      { label: 'Preventivos', data: [34,37,34,34],     backgroundColor: '#607d8b', borderRadius: 5 }
+    ]},
+    options: barOpts
+  });
+
+  // Mensuales
+  const mensualColor = 'rgba(43,76,126,0.75)';
+  new Chart(document.getElementById('fEneTop10'), {
+    type: 'bar',
+    data: { labels: top10Labels, datasets: [{ data: [35,30,22,18,15,12,10,8,7,5], backgroundColor: mensualColor, borderRadius: 4 }] },
+    options: horizOpts
+  });
+  new Chart(document.getElementById('fFebTop10'), {
+    type: 'bar',
+    data: { labels: top10Labels, datasets: [{ data: [32,35,20,16,18,14,11,9,6,4], backgroundColor: mensualColor, borderRadius: 4 }] },
+    options: horizOpts
+  });
+  new Chart(document.getElementById('fMarTop10'), {
+    type: 'bar',
+    data: { labels: top10Labels, datasets: [{ data: [38,32,25,20,18,15,12,10,8,6], backgroundColor: mensualColor, borderRadius: 4 }] },
+    options: horizOpts
+  });
+  new Chart(document.getElementById('fAbrTop10'), {
+    type: 'bar',
+    data: { labels: top10Labels, datasets: [{ data: [42,28,22,18,15,12,10,10,9,7], backgroundColor: mensualColor, borderRadius: 4 }] },
+    options: horizOpts
+  });
+</script>
+</body>
+</html>
